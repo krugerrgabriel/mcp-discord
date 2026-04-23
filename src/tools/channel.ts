@@ -307,7 +307,18 @@ export async function readMessagesHandler(
         },
         timestamp: msg.createdAt,
         attachments: msg.attachments.size,
-        embeds: msg.embeds.length,
+        embeds: msg.embeds.map(e => ({
+          title: e.title ?? null,
+          description: e.description ?? null,
+          url: e.url ?? null,
+          color: e.color ?? null,
+          fields: e.fields?.map(f => ({ name: f.name, value: f.value, inline: f.inline })) ?? [],
+          footer: e.footer?.text ?? null,
+          timestamp: e.timestamp ?? null,
+          author: e.author ? { name: e.author.name, url: e.author.url } : null,
+          thumbnail: e.thumbnail?.url ?? null,
+          image: e.image?.url ?? null,
+        })),
         replyTo: msg.reference ? msg.reference.messageId : null,
       }))
       .sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
